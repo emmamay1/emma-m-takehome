@@ -1,7 +1,22 @@
-﻿@page "/"
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<RemoteAuthenticatorView Action="login" />
+
+<button @onclick="Logout">Logout</button>
+
+@code {
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+
+    private void Logout()
+    {
+        NavigationManager.NavigateTo("authentication/logout");
+    }
+}
