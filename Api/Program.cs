@@ -4,6 +4,11 @@ using Microsoft.Extensions.Hosting;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Builder;
+
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -12,18 +17,10 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddControllers();
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        services.AddAuthentication().AddGoogle(googleOptions =>
             {
-                options.Authority = "https://accounts.google.com";
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = "https://accounts.google.com",
-                    ValidateAudience = true,
-                    ValidAudience = "114269276262-36tjllb91prr18qvpj1t7o40j2ccgqv1.apps.googleusercontent.com",
-                    ValidateLifetime = true
-                };
+                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
             });
         services.AddAuthorization();
     })
